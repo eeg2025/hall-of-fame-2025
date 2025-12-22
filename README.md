@@ -10,3 +10,10 @@ This repository contains the top submissions to the EEG Foundation Challenge 202
 | MBZUAI | [GitHub](MBZUAI/) | [HuggingFace](https://huggingface.co/eeg2025/MBZUAI) | 5 | 2 |
 | MIND_CICO | [GitHub](MIND_CICO/) | [HuggingFace](https://huggingface.co/eeg2025/MIND-CICO) | 3 | 3 |
 
+## 🚀 Example usage
+
+Running the following command will automatically download the weights from HuggingFace and load them in the models:
+
+```bash
+python ./KU_Leuven/submission.py
+```
