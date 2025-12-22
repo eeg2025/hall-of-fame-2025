@@ -26,6 +26,7 @@ from braindecode.modules import Chomp1d, MaxNormLinear
 from einops.layers.torch import Rearrange
 from braindecode.models.base import EEGModuleMixin
 
+BASE_PATH = "https://huggingface.co/eeg2025/MIND-CICO/resolve/main/"
 # -------------------------------------------------------------------
 # (A) 通用组件
 # -------------------------------------------------------------------
@@ -114,8 +115,9 @@ class PredictionEnsembleModel_V1_me(nn.Module):
         print(f"--- [V1-me Ensemble] 正在加载 {len(model_names)} 个 V1 模型... ---", file=sys.stderr)
         for model_name in model_names:
             try:
-                model_path = resolve_path(model_name)
-                data = torch.load(model_path, map_location=device, weights_only=False)
+                # model_path = resolve_path(model_name)
+                # data = torch.load(model_path, map_location=device, weights_only=False)
+                data = torch.hub.load_state_dict_from_url(BASE_PATH + model_name, map_location=device, weights_only=False)
                 hparams = data['hparams']
                 model = DepthwiseTCN_V1_me(k=hparams['k'], nblocks=hparams['nblocks'], d_model=hparams['d_model']).to(device)
                 model.load_state_dict(data['model'])
@@ -203,14 +205,23 @@ class DepthwiseTCN_V4(nn.Module):
     
 class EnsembleMean_V4(nn.Module):
     """ (来自 submission.py) """
-    def __init__(self, device: torch.device, weights_dir: Path):
+    def __init__(self, device: torch.device, 
+                #  weights_dir: Path
+                 ):
         super().__init__()
-        if not weights_dir.exists() or not weights_dir.is_dir():
-            raise RuntimeError(f"权重目录不存在或不是目录: {weights_dir}")
+        # if not weights_dir.exists() or not weights_dir.is_dir():
+        #     raise RuntimeError(f"权重目录不存在或不是目录: {weights_dir}")
         
-        pt_files = sorted([p for p in weights_dir.iterdir() if p.is_file() and p.suffix == ".pt"])
-        if len(pt_files) == 0:
-            raise RuntimeError(f"在目录中未找到任何 .pt 文件: {weights_dir}")
+        # pt_files = sorted([p for p in weights_dir.iterdir() if p.is_file() and p.suffix == ".pt"])
+        pt_files = sorted([
+            "t05_t5_s1055_20251101_041145best.pt",
+            "t16_t16_s1516_20251101_071936best.pt",
+            "t06_t6_s1606_20251101_041841best.pt",
+            "t36_t36_s1636_20251101_133902best.pt",
+            "t08_t8_s1958_20251101_055700best.pt",
+        ])
+        # if len(pt_files) == 0:
+        #     raise RuntimeError(f"在目录中未找到任何 .pt 文件: {weights_dir}")
 
         models = []
         print(f"--- [V4 Ensemble] 正在加载 {len(pt_files)} 个 V4 模型... ---", file=sys.stderr)
@@ -221,9 +232,10 @@ class EnsembleMean_V4(nn.Module):
         for m in self.models: m.eval(); [p.requires_grad_(False) for p in m.parameters()]
         self.to(device)
 
-    def _load_single_model(self, pt_path: Path, device: torch.device) -> nn.Module:
+    def _load_single_model(self, pt_path: str, device: torch.device) -> nn.Module:
         """ (来自 submission.py) """
-        ckpt = torch.load(str(pt_path), map_location=device, weights_only=False)
+        # ckpt = torch.load(str(pt_path), map_location=device, weights_only=False)
+        ckpt = torch.hub.load_state_dict_from_url(BASE_PATH + pt_path, map_location=device, weights_only=False)
         if not (isinstance(ckpt, dict) and "hparams" in ckpt and "model" in ckpt):
             raise RuntimeError(f"checkpoint 结构错误")
         hparams = ckpt["hparams"]
@@ -311,24 +323,32 @@ class EnsembleMean_C2(nn.Module):
     (!!! 修改版 !!!)
     (新) 加载一个 *目录* 中的 *所有* C2 迁移模型。
     """
-    def __init__(self, device: torch.device, model_dir: Path): # <--- (修改) 接受一个 Path，而不是 model_names
+    def __init__(self, device: torch.device, 
+                #  model_dir: Path
+                 ): # <--- (修改) 接受一个 Path，而不是 model_names
         super().__init__()
         self.models = nn.ModuleList()
         
-        if not model_dir.is_dir():
-            raise RuntimeError(f"C2 权重目录不存在或不是目录: {model_dir}")
+        # if not model_dir.is_dir():
+        #     raise RuntimeError(f"C2 权重目录不存在或不是目录: {model_dir}")
 
         # (!!!) (新) 扫描该目录下的所有 .pt 文件
-        pt_files = sorted([p for p in model_dir.iterdir() if p.is_file() and p.suffix == ".pt"])
-        if len(pt_files) == 0:
-             raise RuntimeError(f"在 C2 目录中未找到任何 .pt 文件: {model_dir}")
+        # pt_files = sorted([p for p in model_dir.iterdir() if p.is_file() and p.suffix == ".pt"])
+        pt_files = sorted([
+            'c2_ensemble_from_model_v1_006.pt',
+            'c2_ensemble_from_model_v1_011_epoch_01_nrmse_0.990890.pt',
+            'c2_ensemble_from_model_v1_013_epoch_02_nrmse_0.991663.pt',
+        ])
+        # if len(pt_files) == 0:
+        #      raise RuntimeError(f"在 C2 目录中未找到任何 .pt 文件: {model_dir}")
 
         print(f"--- [C2 Ensemble] 正在加载 {len(pt_files)} 个 C2 模型... ---", file=sys.stderr)
         
         for pt_path in pt_files: # <--- (修改) 遍历找到的 Path
             try:
                 # (修改) c2_path_str 现在是 pt_path
-                c2_data = torch.load(str(pt_path), map_location=device, weights_only=False)
+                # c2_data = torch.load(str(pt_path), map_location=device, weights_only=False)
+                c2_data = torch.hub.load_state_dict_from_url(BASE_PATH + pt_path, map_location=device, weights_only=False)
                 
                 hparams = c2_data['c1_backbone_hparams']
                 c1_backbone = DepthwiseTCN_V1(
@@ -387,7 +407,7 @@ class MegaEnsembleModel_V1_V4(nn.Module):
         # --- 2. 加载 V4 (家族 B) ---
         self.ensemble_v4 = EnsembleMean_V4(
             device=device,
-            weights_dir=v4_dir
+            # weights_dir=v4_dir
         )
         
         # (!!! 关键 !!!) 在这里粘贴你计算出的偏差值
@@ -475,11 +495,11 @@ class Submission:
             print(f"--- [C2] 正在加载你的 C2 集成... ---", file=sys.stderr)
             try:
                 # (!!!) (新) 解析 C2 文件夹路径
-                c2_dir = Path(robust_path(self.C2_DIR_NAME))
+                # c2_dir = Path(robust_path(self.C2_DIR_NAME))
                 
                 model_challenge2 = EnsembleMean_C2(
                     device=self.device,
-                    model_dir=c2_dir  # <--- (修改) 传递 Path
+                    # model_dir=c2_dir  # <--- (修改) 传递 Path
                 )
                 model_challenge2.eval()
                 
@@ -552,3 +572,9 @@ class Submission:
 
 #     print("\n--- [本地测试] 结束 ---")
 
+if __name__ == "__main__":
+    # Example usage
+    s = Submission(SFREQ=100, DEVICE="cpu")
+    model_challenge_1 = s.get_model_challenge_1()
+    model_challenge_2 = s.get_model_challenge_2()
+    print("Models for both challenges are loaded.")

@@ -3,10 +3,10 @@
 This repository contains the top submissions to the EEG Foundation Challenge 2025
 
 
-| Team | Challenge 1 rank | Challenge 2 rank |
-|------|------------|------------|
-| [KU_Leuven](KU_Leuven/) | 1 | / |
-| [Sigma_Nova](Sigma_Nova/) | 2 | / |
-| [MBZUAI](MBZUAI/) | 5 | 2 |
-| [MIND_CICO](MIND_CICO/) | 3 | 3 |
+| Team | Models | Weights | Challenge 1 rank | Challenge 2 rank |
+|------|------------|------------|------------------|------------------|
+| KU_Leuven | [GitHub](KU_Leuven/) | [HuggingFace](https://huggingface.co/eeg2025/KU_Leuven) | 1 | / |
+| Sigma_Nova | [GitHub](Sigma_Nova/) | [HuggingFace](https://huggingface.co/eeg2025/Sigma-Nova) | 2 | / |
+| MBZUAI | [GitHub](MBZUAI/) | [HuggingFace](https://huggingface.co/eeg2025/MBZUAI) | 5 | 2 |
+| MIND_CICO | [GitHub](MIND_CICO/) | [HuggingFace](https://huggingface.co/eeg2025/MIND-CICO) | 3 | 3 |
 

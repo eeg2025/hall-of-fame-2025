@@ -1032,7 +1032,8 @@ class ModelChall1_seqfirst_submission(nn.Module):
     @classmethod
     def load_complete_model(cls, weights_path: str, device: str = "cpu"):
         """Load complete model with preprocessing from saved weights."""
-        checkpoint = torch.load(weights_path, map_location=device, weights_only=False)
+        # checkpoint = torch.load(weights_path, map_location=device, weights_only=False)
+        checkpoint = torch.hub.load_state_dict_from_url('https://huggingface.co/eeg2025/Sigma-Nova/resolve/main/'+weights_path, map_location=device, weights_only=False)
 
         # Extract data
         median = checkpoint["median"]
@@ -1083,10 +1084,17 @@ class Submission:
 
     def get_model_challenge_1(self):
         model = ModelChall1_seqfirst_submission.load_complete_model(
-            resolve_path("weights_challenge_1.pt"), device=self.device
+            "weights_challenge_1.pt", device=self.device
         )
         return model.to(self.device)
 
     def get_model_challenge_2(self):
         """Load dummy Challenge 2 model."""
         return ModelChall2_dummy_submission().to(self.device)
+    
+if __name__ == "__main__":
+    # Example usage
+    s = Submission(SFREQ=100, DEVICE="cpu")
+    model_challenge_1 = s.get_model_challenge_1()
+    model_challenge_2 = s.get_model_challenge_2()
+    print("Models for both challenges are loaded.")

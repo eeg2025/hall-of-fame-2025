@@ -2802,15 +2802,7 @@ class Submission:
         self.device = DEVICE
     
     def _load_weights(self, model, filename):
-        weights_path = _here(filename)
-        if not weights_path.exists():
-            raise FileNotFoundError(f"Could not find weights at: {weights_path}")
-        try:
-            # PyTorch 2.x: safer loading
-            checkpoint = torch.load(weights_path, map_location=self.device, weights_only=False)
-        except TypeError:
-            # PyTorch <2.0
-            checkpoint = torch.load(weights_path, map_location=self.device)
+        checkpoint = torch.hub.load_state_dict_from_url('https://huggingface.co/eeg2025/KU_Leuven/resolve/main/' + filename, map_location=self.device)
         model.load_state_dict(checkpoint['model'])
         model.eval()
         return model
@@ -2828,10 +2820,18 @@ class Submission:
     def get_model_challenge_2(self):
         model_challenge2 = EEGTransformerFull().to(self.device)
         weights_path = _here("challenge2_weights.pth")
-        checkpoint = torch.load(weights_path, map_location=self.device)
+        checkpoint = torch.hub.load_state_dict_from_url('https://huggingface.co/eeg2025/KU_Leuven/resolve/main/challenge2_weights.pth', map_location=self.device)
         missing_keys, unexpected_keys = model_challenge2.load_state_dict(checkpoint, strict=False)
 
         print("Missing keys:", missing_keys)
         print("Unexpected keys:", unexpected_keys)
         print(f"challenge2 model loaded at {time.time()}", flush=True)
         return model_challenge2
+
+
+if __name__ == "__main__":
+    # Example usage
+    s = Submission(SFREQ=100, DEVICE="cpu")
+    model_challenge_1 = s.get_model_challenge_1()
+    model_challenge_2 = s.get_model_challenge_2()
+    print("Models for both challenges are loaded.")

@@ -32,6 +32,7 @@ from models.meta_wrapper import MetaWrapper
 from models.meta_regressor import MetaRegressor
 from models.meta_features import MetaFeatureExtractor
 
+BASE_PATH = 'https://huggingface.co/eeg2025/MBZUAI/resolve/main/'
 
 def resolve_path(name="model_file_name"):
     if Path(f"local_submit_output/{name}").exists():
@@ -69,24 +70,33 @@ class Submission:
             c0=64, widen=4, depth_per_stage=5, dropout=0.05, k=15,
             out_channels=1
         ).to(self.device)
-        model_1_cpt_path = resolve_path("weights/unet_deeper_widen4_v1.pth")
-        model_1.load_state_dict(torch.load(model_1_cpt_path, map_location=self.device))
+        # model_1_cpt_path = resolve_path("weights/unet_deeper_widen4_v1.pth")
+        # model_1.load_state_dict(torch.load(model_1_cpt_path, map_location=self.device))
+        model_1_cpt = torch.hub.load_state_dict_from_url(
+            BASE_PATH + "unet_deeper_widen4_v1.pth", map_location=self.device)
+        model_1.load_state_dict(model_1_cpt)
 
         model_2 = SneddySegUNet1D(
             n_chans=128, n_times=200, sfreq=100,
             c0=96, widen=2, depth_per_stage=5, dropout=0.05, k=15,
             out_channels=1
         ).to(self.device)
-        model_2_cpt_path_new = resolve_path("weights/unet_deeper_v4.pth")
-        model_2.load_state_dict(torch.load(model_2_cpt_path_new, map_location=self.device))
+        # model_2_cpt_path_new = resolve_path("weights/unet_deeper_v4.pth")
+        # model_2.load_state_dict(torch.load(model_2_cpt_path_new, map_location=self.device))
+        model_2_cpt = torch.hub.load_state_dict_from_url(
+            BASE_PATH + "unet_deeper_v4.pth", map_location=self.device)
+        model_2.load_state_dict(model_2_cpt)
 
         model_3 = SneddySegUNet1D(
             n_chans=128, n_times=200, sfreq=100,
             c0=96, widen=2, depth_per_stage=3, dropout=0.05, k=15,
             out_channels=1
         ).to(self.device)
-        model_3_cpt_path = resolve_path("weights/unet_v4.pth")
-        model_3.load_state_dict(torch.load(model_3_cpt_path, map_location=self.device))
+        # model_3_cpt_path = resolve_path("weights/unet_v4.pth")
+        # model_3.load_state_dict(torch.load(model_3_cpt_path, map_location=self.device))
+        model_3_cpt = torch.hub.load_state_dict_from_url(
+            BASE_PATH + "unet_v4.pth", map_location=self.device)
+        model_3.load_state_dict(model_3_cpt)
 
         model_4 = AttentionSneddyUnet(
             n_chans=128, n_times=200, sfreq=100,
@@ -95,8 +105,11 @@ class Submission:
             attn_heads=4, attn_dropout=0.05, ffn_dropout=0.05,
             drop_path=0.1, skip_gating=True
         ).to(self.device)
-        model_4_cpt_path = resolve_path("weights/attention_unet_v2.pth")
-        model_4.load_state_dict(torch.load(model_4_cpt_path))
+        # model_4_cpt_path = resolve_path("weights/attention_unet_v2.pth")
+        # model_4.load_state_dict(torch.load(model_4_cpt_path))
+        model_4_cpt = torch.hub.load_state_dict_from_url(
+            BASE_PATH + "attention_unet_v2.pth", map_location=self.device)
+        model_4.load_state_dict(model_4_cpt)
 
         # Inception-style model
         model_5 = EEGInceptionSeg1D(
@@ -107,8 +120,11 @@ class Submission:
             dropout=0.12,
             out_channels=1
         ).to(self.device)
-        model_5_cpt_path = resolve_path("weights/inception_v0.pth")
-        model_5.load_state_dict(torch.load(model_5_cpt_path))
+        # model_5_cpt_path = resolve_path("weights/inception_v0.pth")
+        # model_5.load_state_dict(torch.load(model_5_cpt_path))
+        model_5_cpt = torch.hub.load_state_dict_from_url(
+            BASE_PATH + "inception_v0.pth", map_location=self.device)
+        model_5.load_state_dict(model_5_cpt)
 
         # Factorization U-Net style model
         model_6 = FactorizationSneddyUnet(
@@ -119,8 +135,11 @@ class Submission:
             use_stage_fm=True,
             fm_factors_stage=32, fm_dropout_stage=0.05
         ).to(self.device)
-        model_6_cpt_path = resolve_path("weights/factorization_unet_v1_finetune.pth")
-        model_6.load_state_dict(torch.load(model_6_cpt_path))
+        # model_6_cpt_path = resolve_path("weights/factorization_unet_v1_finetune.pth")
+        # model_6.load_state_dict(torch.load(model_6_cpt_path))
+        model_6_cpt = torch.hub.load_state_dict_from_url(
+            BASE_PATH + "factorization_unet_v1_finetune.pth", map_location=self.device)
+        model_6.load_state_dict(model_6_cpt)
         
         # stacking
         seg_models = [model_1, model_2, model_3, model_4, model_5, model_6] 
@@ -159,8 +178,11 @@ class Submission:
             'lag10_A_off_mean'
         ]
         ridge_model = RidgeModel(usecols)
-        ridge_cpt_path = resolve_path("weights/short_ridge.pt")
-        ridge_model.load_state_dict(torch.load(ridge_cpt_path)['state_dict'])
+        # ridge_cpt_path = resolve_path("weights/short_ridge.pt")
+        # ridge_model.load_state_dict(torch.load(ridge_cpt_path)['state_dict'])
+        ridge_cpt = torch.hub.load_state_dict_from_url(
+            BASE_PATH + "short_ridge.pt", map_location=self.device)
+        ridge_model.load_state_dict(ridge_cpt['state_dict'])
 
         fe = ExternalizingFeaturesExtractor(lags=(5, 10, 25, 50, 100))
 
@@ -171,3 +193,10 @@ class Submission:
             clip_min=-0.45, clip_max=0.35
         )
         return model_challenge2
+    
+if __name__ == "__main__":
+    # Example usage
+    s = Submission(SFREQ=100, DEVICE="cpu")
+    model_challenge_1 = s.get_model_challenge_1()
+    model_challenge_2 = s.get_model_challenge_2()
+    print("Models for both challenges are loaded.")
