@@ -8,12 +8,10 @@ The EEG Foundation Challenge 2025 focuses on advancing electroencephalography (E
 
 ### Challenge Tasks
 
-The challenge includes two distinct tasks focused on EEG signal analysis:
+The challenge includes two distinct tasks:
 
-- **Challenge 1**: Primary EEG analysis task (see official challenge documentation for details)
-- **Challenge 2**: Advanced EEG processing task (see official challenge documentation for details)
-
-For detailed information about task objectives, datasets, and evaluation criteria, please refer to the official challenge documentation.
+- **Challenge 1**: EEG signal analysis task
+- **Challenge 2**: EEG signal processing task
 
 ## 🏆 Leaderboard
 
@@ -113,8 +111,7 @@ This repository is licensed under the BSD 3-Clause License. See the [LICENSE](LI
 
 - GitHub Organization: [eeg2025](https://github.com/eeg2025)
 - Model Weights: [HuggingFace - eeg2025](https://huggingface.co/eeg2025)
-- For official challenge information, rules, and documentation, please refer to the official EEG Foundation Challenge 2025 resources
 
 ## 📧 Contact
 
-For questions about the challenge or submissions, please refer to the official EEG Challenge 2025 channels.
+For questions about the challenge or submissions, please open an issue in this repository or visit the [eeg2025 GitHub organization](https://github.com/eeg2025).
