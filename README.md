@@ -7,8 +7,8 @@ This repository contains the top submissions to the EEG Foundation Challenge 202
 |------|------------|------------|------------------|------------------|
 | KU_Leuven | [GitHub](KU_Leuven/) | [HuggingFace](https://huggingface.co/eeg2025/KU_Leuven) | 1 | / |
 | Sigma_Nova | [GitHub](Sigma_Nova/) | [HuggingFace](https://huggingface.co/eeg2025/Sigma-Nova) | 2 | / |
-| MBZUAI | [GitHub](MBZUAI/) | [HuggingFace](https://huggingface.co/eeg2025/MBZUAI) | 5 | 2 |
-| MIND_CICO | [GitHub](MIND_CICO/) | [HuggingFace](https://huggingface.co/eeg2025/MIND-CICO) | 3 | 3 |
+| MBZUAI | [GitHub](MBZUAI/) | [HuggingFace](https://huggingface.co/eeg2025/MBZUAI) | 5 | 1 |
+| MIND_CICO | [GitHub](MIND_CICO/) | [HuggingFace](https://huggingface.co/eeg2025/MIND-CICO) | 3 | 2 |
 
 ## 🚀 Example usage
 
